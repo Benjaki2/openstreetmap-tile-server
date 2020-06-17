@@ -1,13 +1,23 @@
 version: '3'
 
 services:
-  map:
+  osm-tile-backend:
     image: overv/openstreetmap-tile-server
     volumes:
       - openstreetmap-data:/var/lib/postgresql/12/main
+      - ../maryland-latest.osm.pbf:/data.osm.pbf
+    environment:
+      - ALLOW_CORS=enabled
     ports:
-      - "8080:80"
+      - "9000:80"
     command: "run"
+  reproject:
+    image: yagajs/mapproxy
+    volumes:
+      - ../mapproxy:/mapproxy
+    ports:
+      - "8080:8080"
+    command: ["mapproxy", "http"]
 
 volumes:
   openstreetmap-data:
